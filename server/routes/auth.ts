@@ -49,11 +49,17 @@ authRouter.post("/api/signin", async (req: any, res: any) => {
     if (!user) {
       return res
         .status(400)
-        .json({ message: "User with this ${email} does not exist" });
+        .json({ message: `User with this ${email} does not exist` });
     }
 
-    //since password is encrypted, it needs to be compared with confirmPassword
-    const isMatch = await bcrypt.compare(password, user.cobfirmPassword);
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Email and password are required." });
+    }
+
+    // Corrected here
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
